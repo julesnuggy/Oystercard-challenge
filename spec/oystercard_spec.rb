@@ -1,9 +1,12 @@
 require 'oystercard'
+require 'station'
   describe Oystercard do
     #oystercard = Oystercard.new
     subject(:oystercard) {described_class.new}
     subject(:oystercard_empty) {described_class.new}
-    let(:station_dbl) { double(:station_dbl) }
+    let(:station_dbl) { double :station }
+    let(:exit_station_dbl) { double :station }
+    let(:journey) { {station_dbl: station_dbl, exit_station_dbl: exit_station_dbl }}
 
     before do
       oystercard.balance = 1
@@ -34,7 +37,7 @@ require 'oystercard'
 
       it 'should reduce the balance by minimum fare when touch_out' do
         oystercard.top_up(1)
-        expect { oystercard.touch_out }.to change {oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
+        expect { oystercard.touch_out(exit_station_dbl) }.to change {oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
       end
 
     end
@@ -48,7 +51,7 @@ require 'oystercard'
 
       it 'should end the journey when touch out' do
         oystercard.touch_in(station_dbl)
-        oystercard.touch_out
+        oystercard.touch_out(exit_station_dbl)
         expect(oystercard.in_journey?).to be_falsey
       end
 
@@ -66,6 +69,23 @@ require 'oystercard'
         oystercard.touch_in(station_dbl)
         expect(oystercard.entry_station).to eq station_dbl
       end
+    end
+
+    describe 'journey history' do
+    
+      it 'should return an empty list of journeys by default' do
+        expect(oystercard.history).to be_empty
+      end
+
+      it 'should store the entry station and the exit station in a hash' do
+        entry_station = Station.new("entry_station")
+        exit_station = Station.new("exit_station")
+        oystercard.touch_in(entry_station)
+        oystercard.touch_out(exit_station)
+        expect(oystercard.history).to include [{:entry_station => :exit_station}]
+      end
+
+
     end
 
 
