@@ -6,7 +6,7 @@ require 'oystercard'
     let(:station_dbl) { double(:station_dbl, name: "Paddington") }
 
     before do
-      oystercard.top_up(1)
+      oystercard.balance = 1
     end
 
     describe "check balance and enforce limits" do
@@ -34,7 +34,7 @@ require 'oystercard'
 
       it 'should reduce the balance by minimum fare when touch_out' do
         oystercard.top_up(1)
-        expect { oystercard.touch_out(station_dbl) }.to change {oystercard.balance}.by(-1)
+        expect { oystercard.touch_out(station_dbl) }.to change {oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
       end
 
     end
