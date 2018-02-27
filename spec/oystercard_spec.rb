@@ -1,5 +1,7 @@
 require 'oystercard'
 require 'station'
+require 'journey'
+
   describe Oystercard do
     #oystercard = Oystercard.new
     subject(:oystercard) {described_class.new}
@@ -27,7 +29,7 @@ require 'station'
       end
 
       it 'should raise an error when below minimum balance' do
-        expect { oystercard_empty.touch_in(station_dbl) }.to raise_error("Sorry, not enough credit in balance (£#{oystercard_empty.balance})")
+        expect { oystercard_empty.touch_in(station_dbl) }.to raise_error("Sorry, not enough credit in balance £#{oystercard_empty.balance}")
       end
 
       it 'should NOT raise an error when at minimum balance' do
@@ -44,13 +46,11 @@ require 'station'
 
     describe "check and change journey status" do
       it "should start the journey when touch in" do
-        oystercard.top_up(1)
         oystercard.touch_in(station_dbl)
         expect(oystercard.in_journey?).to be_truthy
       end
 
       it 'should end the journey when touch out' do
-        oystercard.touch_in(station_dbl)
         oystercard.touch_out(exit_station_dbl)
         expect(oystercard.in_journey?).to be_falsey
       end
@@ -72,7 +72,7 @@ require 'station'
     end
 
     describe 'journey history' do
-    
+
       it 'should return an empty list of journeys by default' do
         expect(oystercard.history).to be_empty
       end

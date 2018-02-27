@@ -1,8 +1,8 @@
 class Journey
-attr_accessor :fare
+attr_accessor :journeys
 
   def initialize
-
+    @journeys = []
   end
 
 end
