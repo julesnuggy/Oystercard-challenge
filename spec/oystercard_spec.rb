@@ -3,7 +3,7 @@ require 'oystercard'
     #oystercard = Oystercard.new
     subject(:oystercard) {described_class.new}
     subject(:oystercard_empty) {described_class.new}
-    let(:station_dbl) { double(:station_dbl, name: "Paddington") }
+    let(:station_dbl) { double(:station_dbl) }
 
     before do
       oystercard.balance = 1
@@ -34,7 +34,7 @@ require 'oystercard'
 
       it 'should reduce the balance by minimum fare when touch_out' do
         oystercard.top_up(1)
-        expect { oystercard.touch_out(station_dbl) }.to change {oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
+        expect { oystercard.touch_out }.to change {oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
       end
 
     end
@@ -48,7 +48,7 @@ require 'oystercard'
 
       it 'should end the journey when touch out' do
         oystercard.touch_in(station_dbl)
-        oystercard.touch_out(station_dbl)
+        oystercard.touch_out
         expect(oystercard.in_journey?).to be_falsey
       end
 
@@ -64,7 +64,7 @@ require 'oystercard'
     describe 'keep track of journey history' do
       it 'logs the entry station' do
         oystercard.touch_in(station_dbl)
-        expect(oystercard.entry_station).to eq "Paddington"
+        expect(oystercard.entry_station).to eq station_dbl
       end
     end
 

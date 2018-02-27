@@ -23,15 +23,13 @@ class Oystercard
     @entry_station = station_object
   end
 
-  def touch_out(exit_station)
+  def touch_out
     deduct(MINIMUM_FARE)
-    @exit_station = exit_station
     @entry_station = nil
   end
 
   def in_journey?
-    # Return true if @entry_station is NOT nil (i.e. in journey)
-    !@entry_station.nil?
+    !!@entry_station
   end
 
   private
