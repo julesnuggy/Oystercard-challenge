@@ -39,7 +39,7 @@ require 'oystercard'
 
     end
 
-    describe "check and change card_status" do
+    describe "check and change journey status" do
       it "should start the journey when touch in" do
         oystercard.top_up(1)
         oystercard.touch_in(station_dbl)
@@ -52,11 +52,11 @@ require 'oystercard'
         expect(oystercard.in_journey?).to be_falsey
       end
 
-      it 'should be false when card_status is not_in_use' do
+      it 'should be false when not in journey' do
         expect(oystercard.in_journey?).to be_falsey
       end
 
-      it 'should be true when card_status is in_use' do
+      it 'should be true when in journey' do
         oystercard.touch_in(station_dbl)
         expect(oystercard.in_journey?).to be_truthy
       end
