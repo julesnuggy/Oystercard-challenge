@@ -6,12 +6,14 @@ require 'journey'
     #oystercard = Oystercard.new
     subject(:oystercard) {described_class.new}
     subject(:oystercard_empty) {described_class.new}
-    let(:station_dbl) { double :station }
-    let(:exit_station_dbl) { double :station }
+    subject(:oystercard_min) {described_class.new}
+    let(:station_dbl) { double :station_dbl }
+    let(:exit_station_dbl) { double :exit_station_dbl }
     let(:journey) { {station_dbl: station_dbl, exit_station_dbl: exit_station_dbl }}
 
     before do
-      oystercard.balance = 1
+      oystercard.balance = 10
+      oystercard_min.balance = 1
     end
 
     describe "check balance and enforce limits" do
@@ -33,12 +35,10 @@ require 'journey'
       end
 
       it 'should NOT raise an error when at minimum balance' do
-        oystercard.top_up(1)
-        expect { oystercard.touch_in(station_dbl) }.not_to raise_error
+        expect { oystercard_min.touch_in(station_dbl) }.not_to raise_error
       end
 
       it 'should reduce the balance by minimum fare when touch_out' do
-        oystercard.top_up(1)
         expect { oystercard.touch_out(exit_station_dbl) }.to change {oystercard.balance}.by(-Oystercard::MINIMUM_FARE)
       end
 
@@ -78,13 +78,18 @@ require 'journey'
       end
 
       it 'should store the entry station and the exit station in a hash' do
-        entry_station = Station.new("entry_station")
-        exit_station = Station.new("exit_station")
-        oystercard.touch_in(entry_station)
-        oystercard.touch_out(exit_station)
-        expect(oystercard.history).to include [{:entry_station => :exit_station}]
+        oystercard.touch_in(:station_dbl)
+        oystercard.touch_out(:exit_station_dbl)
+        expect(oystercard.history).to eq [{:entry_station => :station_dbl, :exit_station => :exit_station_dbl}]
       end
 
+      it 'should record a multi-journey history' do
+        oystercard.touch_in(:station_dbl)
+        oystercard.touch_out(:exit_station_dbl)
+        oystercard.touch_in(:exit_station_dbl)
+        oystercard.touch_out(:station_dbl)
+        expect(oystercard.history).to eq [{:entry_station => :station_dbl, :exit_station => :exit_station_dbl}, {:entry_station => :exit_station_dbl, :exit_station => :station_dbl}]
+      end
 
     end
 
