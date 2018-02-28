@@ -1,5 +1,6 @@
 require_relative 'station.rb'
 require_relative 'journey.rb'
+require_relative 'journeylog.rb'
 
 class Oystercard
   DEFAULT_LIMIT = 90
@@ -9,10 +10,10 @@ class Oystercard
   attr_accessor :balance
 
 
-  def initialize(limit = DEFAULT_LIMIT, journey = Journey.new)
+  def initialize(limit = DEFAULT_LIMIT, journeylog = JourneyLog.new)
     @balance = 0
     @limit = limit
-    @journey = journey
+    @journeylog = journeylog
   end
 
   def top_up(amount)
@@ -22,12 +23,12 @@ class Oystercard
 
   def touch_in(station)
     raise "Sorry, not enough credit in balance £#{@balance}" if @balance < MINIMUM_BALANCE
-    @journey.start(station)
+    @journeylog.start(station)
   end
 
   def touch_out(station)
-    @journey.finish(station)
-    deduct(@journey.fare)
+    @journeylog.finish(station)
+    deduct(@journeylog.fare)
   end
 
   private

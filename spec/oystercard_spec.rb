@@ -10,11 +10,14 @@ require 'journey'
     let(:station_dbl) { double :station_dbl }
     let(:exit_station_dbl) { double :exit_station_dbl }
     let(:journey) { {station_dbl: station_dbl, exit_station_dbl: exit_station_dbl }}
+    let(:jlog_double) { double :jlog_double }
 
     before do
       oystercard.balance = 10
       oystercard_min.balance = 1
+      #allow(jlog_dbl).to receive(:fare) { 1 }
     end
+
 
     describe "check balance and enforce limits" do
 
@@ -40,6 +43,7 @@ require 'journey'
 
       it 'should reduce the balance by minimum fare when touch_out' do
         oystercard.touch_in(:station_dbl)
+        #expect(oystercard.touch_out(exit_station_dbl)).to
         expect { oystercard.touch_out(exit_station_dbl) }.to change {oystercard.balance}.by(-1)
       end
 
